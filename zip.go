@@ -12,8 +12,8 @@ import (
 	"strings"
 
 	"github.com/dsnet/compress/bzip2"
-	"github.com/klauspost/compress/zip"
 	"github.com/klauspost/compress/zstd"
+	"github.com/mzky/zip"
 	"github.com/ulikunitz/xz"
 	"golang.org/x/text/encoding"
 	"golang.org/x/text/encoding/charmap"
@@ -79,6 +79,9 @@ type Zip struct {
 	// encoded filenames and comments, specify the character
 	// encoding here.
 	TextEncoding string
+
+	// Password to open archives.
+	Password string
 }
 
 func (z Zip) Name() string { return ".zip" }
@@ -207,8 +210,17 @@ func (z Zip) Extract(ctx context.Context, sourceArchive io.Reader, pathsInArchiv
 		if !fileIsIncluded(pathsInArchive, f.Name) {
 			continue
 		}
+
 		if fileIsIncluded(skipDirs, f.Name) {
 			continue
+		}
+
+		if f.IsEncrypted() {
+			if z.Password == "" {
+				return fmt.Errorf("file %d: %s is encrypted and no password was provided", i, f.Name)
+			}
+
+			f.SetPassword(z.Password)
 		}
 
 		file := File{
@@ -242,7 +254,8 @@ func (z Zip) Extract(ctx context.Context, sourceArchive io.Reader, pathsInArchiv
 // It is a no-op if the text is already UTF-8 encoded or if z.TextEncoding
 // is not specified.
 func (z Zip) decodeText(hdr *zip.FileHeader) {
-	if hdr.NonUTF8 && z.TextEncoding != "" {
+	//if hdr.NonUTF8 && z.TextEncoding != "" {
+	if false && z.TextEncoding != "" {
 		filename, err := decodeText(hdr.Name, z.TextEncoding)
 		if err == nil {
 			hdr.Name = filename
