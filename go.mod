@@ -1,4 +1,4 @@
-module github.com/mholt/archiver/v4
+module github.com/ihippik/archiver/v4
 
 go 1.18
 
@@ -15,6 +15,7 @@ require (
 require (
 	github.com/bodgit/sevenzip v1.3.0
 	github.com/golang/snappy v0.0.4
+	github.com/mzky/zip v0.0.0-20210817031838-1b692015aed2
 	github.com/pierrec/lz4/v4 v4.1.15
 	golang.org/x/text v0.3.8
 )
@@ -25,5 +26,7 @@ require (
 	github.com/connesc/cipherio v0.2.1 // indirect
 	github.com/hashicorp/errwrap v1.0.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
+	github.com/yeka/zip v0.0.0-20180914125537-d046722c6feb // indirect
 	go4.org v0.0.0-20200411211856-f5505b9728dd // indirect
+	golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550 // indirect
 )
