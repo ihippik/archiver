@@ -25,7 +25,7 @@ import (
 )
 
 func init() {
-	RegisterFormat(Zip{})
+	RegisterFormat(&Zip{})
 
 	// TODO: What about custom flate levels too
 	zip.RegisterCompressor(ZipMethodBzip2, func(out io.Writer) (io.WriteCloser, error) {
@@ -84,9 +84,9 @@ type Zip struct {
 	Password string
 }
 
-func (z Zip) Name() string { return ".zip" }
+func (z *Zip) Name() string { return ".zip" }
 
-func (z Zip) Match(filename string, stream io.Reader) (MatchResult, error) {
+func (z *Zip) Match(filename string, stream io.Reader) (MatchResult, error) {
 	var mr MatchResult
 
 	// match filename
@@ -104,7 +104,7 @@ func (z Zip) Match(filename string, stream io.Reader) (MatchResult, error) {
 	return mr, nil
 }
 
-func (z Zip) Archive(ctx context.Context, output io.Writer, files []File) error {
+func (z *Zip) Archive(ctx context.Context, output io.Writer, files []File) error {
 	zw := zip.NewWriter(output)
 	defer zw.Close()
 
@@ -117,7 +117,7 @@ func (z Zip) Archive(ctx context.Context, output io.Writer, files []File) error 
 	return nil
 }
 
-func (z Zip) ArchiveAsync(ctx context.Context, output io.Writer, jobs <-chan ArchiveAsyncJob) error {
+func (z *Zip) ArchiveAsync(ctx context.Context, output io.Writer, jobs <-chan ArchiveAsyncJob) error {
 	zw := zip.NewWriter(output)
 	defer zw.Close()
 
@@ -130,7 +130,7 @@ func (z Zip) ArchiveAsync(ctx context.Context, output io.Writer, jobs <-chan Arc
 	return nil
 }
 
-func (z Zip) archiveOneFile(ctx context.Context, zw *zip.Writer, idx int, file File) error {
+func (z *Zip) archiveOneFile(ctx context.Context, zw *zip.Writer, idx int, file File) error {
 	if err := ctx.Err(); err != nil {
 		return err // honor context cancellation
 	}
@@ -174,7 +174,7 @@ func (z Zip) archiveOneFile(ctx context.Context, zw *zip.Writer, idx int, file F
 }
 
 // SetPassword sets the password to open encrypted archive.
-func (z Zip) SetPassword(password string) {
+func (z *Zip) SetPassword(password string) {
 	z.Password = password
 }
 
@@ -184,7 +184,7 @@ func (z Zip) SetPassword(password string) {
 // the interface because we figure you can Read() from anything you can ReadAt() or Seek()
 // with. Due to the nature of the zip archive format, if sourceArchive is not an io.Seeker
 // and io.ReaderAt, an error is returned.
-func (z Zip) Extract(ctx context.Context, sourceArchive io.Reader, pathsInArchive []string, handleFile FileHandler) error {
+func (z *Zip) Extract(ctx context.Context, sourceArchive io.Reader, pathsInArchive []string, handleFile FileHandler) error {
 	sra, ok := sourceArchive.(seekReaderAt)
 	if !ok {
 		return fmt.Errorf("input type must be an io.ReaderAt and io.Seeker because of zip format constraints")
@@ -258,7 +258,7 @@ func (z Zip) Extract(ctx context.Context, sourceArchive io.Reader, pathsInArchiv
 // decodeText decodes the name and comment fields from hdr into UTF-8.
 // It is a no-op if the text is already UTF-8 encoded or if z.TextEncoding
 // is not specified.
-func (z Zip) decodeText(hdr *zip.FileHeader) {
+func (z *Zip) decodeText(hdr *zip.FileHeader) {
 	//if hdr.NonUTF8 && z.TextEncoding != "" {
 	if false && z.TextEncoding != "" {
 		filename, err := decodeText(hdr.Name, z.TextEncoding)
@@ -398,7 +398,7 @@ var zipHeader = []byte("PK\x03\x04") // NOTE: headers of empty zip files might e
 
 // Interface guards
 var (
-	_ Archiver      = Zip{}
-	_ ArchiverAsync = Zip{}
-	_ Extractor     = Zip{}
+	_ Archiver      = &Zip{}
+	_ ArchiverAsync = &Zip{}
+	_ Extractor     = &Zip{}
 )
