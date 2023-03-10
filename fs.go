@@ -58,7 +58,7 @@ func FileSystem(ctx context.Context, root string) (fs.FS, error) {
 
 	if format != nil {
 		switch ff := format.(type) {
-		case Zip:
+		case *Zip:
 			// zip.Reader is more performant than ArchiveFS, because zip.Reader caches content information
 			// and zip.Reader can open several content files concurrently because of io.ReaderAt requirement
 			// while ArchiveFS can't.

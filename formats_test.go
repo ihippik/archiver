@@ -352,7 +352,7 @@ func TestIdentifyFindFormatByStreamContent(t *testing.T) {
 		{
 			name:                  "should recognize zip",
 			openCompressionWriter: newWriteNopCloser,
-			content:               archive(t, Zip{}, tmpTxtFileName, tmpTxtFileInfo),
+			content:               archive(t, &Zip{}, tmpTxtFileName, tmpTxtFileInfo),
 			compressorName:        "",
 			wantFormatName:        ".zip",
 		},

@@ -56,7 +56,7 @@ var (
 func ExampleArchiveFS_Stream() {
 	fsys := ArchiveFS{
 		Stream: io.NewSectionReader(bytes.NewReader(testZIP), 0, int64(len(testZIP))),
-		Format: Zip{},
+		Format: &Zip{},
 	}
 	// You can serve the contents in a web server:
 	http.Handle("/static", http.StripPrefix("/static",
@@ -90,7 +90,7 @@ func TestArchiveFS_ReadDir(t *testing.T) {
 			name: "test.zip",
 			archive: ArchiveFS{
 				Stream: io.NewSectionReader(bytes.NewReader(testZIP), 0, int64(len(testZIP))),
-				Format: Zip{},
+				Format: &Zip{},
 			},
 			// unzip -l testdata/test.zip
 			want: map[string][]string{
@@ -101,7 +101,7 @@ func TestArchiveFS_ReadDir(t *testing.T) {
 			name: "nodir.zip",
 			archive: ArchiveFS{
 				Stream: io.NewSectionReader(bytes.NewReader(nodirZIP), 0, int64(len(nodirZIP))),
-				Format: Zip{},
+				Format: &Zip{},
 			},
 			// unzip -l testdata/nodir.zip
 			want: map[string][]string{
@@ -114,7 +114,7 @@ func TestArchiveFS_ReadDir(t *testing.T) {
 			name: "unordered.zip",
 			archive: ArchiveFS{
 				Stream: io.NewSectionReader(bytes.NewReader(unorderZip), 0, int64(len(unorderZip))),
-				Format: Zip{},
+				Format: &Zip{},
 			},
 			// unzip -l testdata/unordered.zip, note entry 1/1 and 1/2 are separated by contents of directory 2
 			want: map[string][]string{

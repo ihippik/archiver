@@ -17,7 +17,7 @@ import (
 )
 
 func init() {
-	RegisterFormat(Rar{})
+	RegisterFormat(&Rar{})
 }
 
 type Rar struct {
@@ -32,7 +32,7 @@ type Rar struct {
 
 func (Rar) Name() string { return ".rar" }
 
-func (r Rar) Match(filename string, stream io.Reader) (MatchResult, error) {
+func (r *Rar) Match(filename string, stream io.Reader) (MatchResult, error) {
 	var mr MatchResult
 
 	// match filename
@@ -57,16 +57,16 @@ func (r Rar) Match(filename string, stream io.Reader) (MatchResult, error) {
 }
 
 // Archive is not implemented for RAR, but the method exists so that Rar satisfies the ArchiveFormat interface.
-func (r Rar) Archive(_ context.Context, _ io.Writer, _ []File) error {
+func (r *Rar) Archive(_ context.Context, _ io.Writer, _ []File) error {
 	return fmt.Errorf("not implemented because RAR is a proprietary format")
 }
 
 // SetPassword sets the password to use when opening archives.
-func (r Rar) SetPassword(password string) {
+func (r *Rar) SetPassword(password string) {
 	r.Password = password
 }
 
-func (r Rar) Extract(ctx context.Context, sourceArchive io.Reader, pathsInArchive []string, handleFile FileHandler) error {
+func (r *Rar) Extract(ctx context.Context, sourceArchive io.Reader, pathsInArchive []string, handleFile FileHandler) error {
 	var options []rardecode.Option
 	if r.Password != "" {
 		options = append(options, rardecode.Password(r.Password))

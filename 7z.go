@@ -15,7 +15,7 @@ import (
 )
 
 func init() {
-	RegisterFormat(SevenZip{})
+	RegisterFormat(&SevenZip{})
 
 	// looks like the sevenzip package registers a lot of decompressors for us automatically:
 	// https://github.com/bodgit/sevenzip/blob/46c5197162c784318b98b9a3f80289a9aa1ca51a/register.go#L38-L61
@@ -31,9 +31,9 @@ type SevenZip struct {
 	Password string
 }
 
-func (z SevenZip) Name() string { return ".7z" }
+func (z *SevenZip) Name() string { return ".7z" }
 
-func (z SevenZip) Match(filename string, stream io.Reader) (MatchResult, error) {
+func (z *SevenZip) Match(filename string, stream io.Reader) (MatchResult, error) {
 	var mr MatchResult
 
 	// match filename
@@ -52,11 +52,11 @@ func (z SevenZip) Match(filename string, stream io.Reader) (MatchResult, error) 
 }
 
 // Archive is not implemented for 7z, but the method exists so that SevenZip satisfies the ArchiveFormat interface.
-func (z SevenZip) Archive(_ context.Context, _ io.Writer, _ []File) error {
+func (z *SevenZip) Archive(_ context.Context, _ io.Writer, _ []File) error {
 	return fmt.Errorf("not implemented for 7z because there is no pure Go implementation found")
 }
 
-func (z SevenZip) SetPassword(password string) {
+func (z *SevenZip) SetPassword(password string) {
 	z.Password = password
 }
 
@@ -66,7 +66,7 @@ func (z SevenZip) SetPassword(password string) {
 // the interface because we figure you can Read() from anything you can ReadAt() or Seek()
 // with. Due to the nature of the zip archive format, if sourceArchive is not an io.Seeker
 // and io.ReaderAt, an error is returned.
-func (z SevenZip) Extract(ctx context.Context, sourceArchive io.Reader, pathsInArchive []string, handleFile FileHandler) error {
+func (z *SevenZip) Extract(ctx context.Context, sourceArchive io.Reader, pathsInArchive []string, handleFile FileHandler) error {
 	sra, ok := sourceArchive.(seekReaderAt)
 	if !ok {
 		return fmt.Errorf("input type must be an io.ReaderAt and io.Seeker because of zip format constraints")
