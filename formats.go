@@ -252,6 +252,11 @@ func (caf CompressedArchive) ArchiveAsync(ctx context.Context, output io.Writer,
 	return do.ArchiveAsync(ctx, output, jobs)
 }
 
+// SetPassword sets the password for the archive. This is not supported
+func (caf CompressedArchive) SetPassword(p string) {
+	panic("not implemented")
+}
+
 // Extract reads files out of an archive while decompressing the results.
 func (caf CompressedArchive) Extract(ctx context.Context, sourceArchive io.Reader, pathsInArchive []string, handleFile FileHandler) error {
 	if caf.Compression != nil {

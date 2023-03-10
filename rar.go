@@ -61,6 +61,11 @@ func (r Rar) Archive(_ context.Context, _ io.Writer, _ []File) error {
 	return fmt.Errorf("not implemented because RAR is a proprietary format")
 }
 
+// SetPassword sets the password to use when opening archives.
+func (r Rar) SetPassword(password string) {
+	r.Password = password
+}
+
 func (r Rar) Extract(ctx context.Context, sourceArchive io.Reader, pathsInArchive []string, handleFile FileHandler) error {
 	var options []rardecode.Option
 	if r.Password != "" {

@@ -173,6 +173,11 @@ func (z Zip) archiveOneFile(ctx context.Context, zw *zip.Writer, idx int, file F
 	return nil
 }
 
+// SetPassword sets the password to open encrypted archive.
+func (z Zip) SetPassword(password string) {
+	z.Password = password
+}
+
 // Extract extracts files from z, implementing the Extractor interface. Uniquely, however,
 // sourceArchive must be an io.ReaderAt and io.Seeker, which are oddly disjoint interfaces
 // from io.Reader which is what the method signature requires. We chose this signature for

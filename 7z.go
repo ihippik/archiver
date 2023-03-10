@@ -56,6 +56,10 @@ func (z SevenZip) Archive(_ context.Context, _ io.Writer, _ []File) error {
 	return fmt.Errorf("not implemented for 7z because there is no pure Go implementation found")
 }
 
+func (z SevenZip) SetPassword(password string) {
+	z.Password = password
+}
+
 // Extract extracts files from z, implementing the Extractor interface. Uniquely, however,
 // sourceArchive must be an io.ReaderAt and io.Seeker, which are oddly disjoint interfaces
 // from io.Reader which is what the method signature requires. We chose this signature for

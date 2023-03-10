@@ -91,6 +91,9 @@ type Extractor interface {
 	//
 	// Context cancellation must be honored.
 	Extract(ctx context.Context, sourceArchive io.Reader, pathsInArchive []string, handleFile FileHandler) error
+
+	// SetPassword sets the password for encrypted archives.
+	SetPassword(password string)
 }
 
 // Inserter can insert files into an existing archive.

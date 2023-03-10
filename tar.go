@@ -169,6 +169,11 @@ func (t Tar) Insert(ctx context.Context, into io.ReadWriteSeeker, files []File) 
 	return nil
 }
 
+// SetPassword is not implemented for tar archives.
+func (t Tar) SetPassword(pw string) {
+	panic("not implemented")
+}
+
 func (t Tar) Extract(ctx context.Context, sourceArchive io.Reader, pathsInArchive []string, handleFile FileHandler) error {
 	tr := tar.NewReader(sourceArchive)
 
